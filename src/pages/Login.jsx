@@ -50,13 +50,17 @@ const Login =  () => {
       
       
               console.log("Login Success");
-              const myId = res.data.accessToken
-              Cookies.set("userId" , myId )
+              const myId = res.data.accessToken;
+              const refreshToken = res.data.refreshToken;
+              console.log(myId)
+              console.log(refreshToken)
+              Cookies.set("userId" , myId ,{ expires: new Date(Date.now() + 100 * 1000) } );
+              Cookies.set("refreshToken" , refreshToken ,{expires:1})
               toast.success('Login Success', {
               position: "top-center",
               autoClose: 5000,
               hideProgressBar: true,
-              closeOnClick: false,
+              closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
@@ -76,7 +80,7 @@ const Login =  () => {
               position: "top-center",
               autoClose: 5000,
               hideProgressBar: true,
-              closeOnClick: false,
+              closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
@@ -94,12 +98,34 @@ const Login =  () => {
          
           
       
+           
       
 }
-      
+
+
+ async function refreshToken(){
+  
+    const rt= Cookies.get("refreshToken")
+    console.log(rt)
+    try{
+          const res = await authentication.refreshToken(rt);
+          Cookies.set("userId" ,res.data.accessToken,{expires:1/24});
+          Cookies.set("refreshToken" ,res.data.refreshToken,{expires: 1});
+          console.log(res)
+    }catch(err){
+      console.log(err)
+    }
+
+
+ }
+
+ setTimeout(()=>{
+    refreshToken()
+ },1*60*1000)
 
 
 
+ 
   return (
     <>
     <div className="w-full h-screen flex justify-center items-center">

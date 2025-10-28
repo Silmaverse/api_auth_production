@@ -16,7 +16,7 @@ const Register = () => {
     })
 
     
-    const[loader,setLoader] =useState(false)
+   const[loader,setLoader] =useState(false)
    console.log(fromData)
 
    const navigate =useNavigate("")
@@ -29,8 +29,10 @@ const Register = () => {
    })
 
 
-   const handleregsiter =async(e)=>{
-     setLoader(true)
+   console.log(allerror)
+
+const handleregsiter =async(e)=>{
+    setLoader(true)
     e.preventDefault();
 
     if(!fromData.username){
@@ -43,16 +45,29 @@ const Register = () => {
         setAllerror((prev)=> ({...prev , passworderror:"border-red-400"}))
     }
 
-     if(!fromData.confirmpasword)
-        return setAllerror((prev)=> ({...prev , confirmpassworderror:"border-red-400"}))
+     if(!fromData.confirmpasword){
+         setAllerror((prev)=> ({...prev , confirmpassworderror:"border-red-400"}))
+     }
     
-    
-     if(fromData.password != fromData.confirmpasword)
-       return setAllerror((prev)=> ({...prev , passworderror:"border-red-400" ,confirmpassworderror:"border-red-400"}))
+     if((fromData.password != fromData.confirmpasword) && (fromData.password) && (fromData.confirmpasword)){
+       toast.error('Password and Confrimpassword mismatch', {
+         position: "top-center",
+         autoClose: 1000,
+         hideProgressBar: true,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         progress: undefined,
+         theme: "dark",
+         transition: Zoom,
+        });
+        setTimeout(()=> setLoader(false) ,1000);
+      
+        return setAllerror((prev)=> ({...prev , passworderror:"border-red-400" ,confirmpassworderror:"border-red-400"}))
+          
 
-     
-
-
+     }
+      
      const payload = {
         username:fromData.username,
         email:fromData.email,
@@ -61,34 +76,31 @@ const Register = () => {
      }
      
     
-      try{
+ try{
          
-           const res = await authentication.registerUser( payload);
-           console.log(res)
-          toast.success('Registration Success!', {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Zoom,
-     });
-  
-         
+     const res = await authentication.registerUser( payload);
+     console.log(res)
+     toast.success('Registration Success!', {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Zoom,
+     })
      
-       console.log("toas")
-       navigate("/login")
-   
-          setLoader(false)
-    }  
-    catch(err){
-          console.log(err)
+      console.log("toas")
+      navigate("/login")
+      setLoader(false)
+
+  } catch(err){
+          console.log(err);
            toast.error('Registration failed!', {
           position: "top-center",
-          autoClose: 5000,
+          autoClose: 1000,
           hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
@@ -98,21 +110,15 @@ const Register = () => {
           transition: Zoom,
           });
           setLoader(false)
-       } 
+         
+  } 
 
-        setLoader(false)
+ 
       
-
+ 
    
 
-    
-
-   
-
-    
-
-
-   }
+}
 
 
 
@@ -148,7 +154,7 @@ const Register = () => {
               focus:ring-blue-200  text-blue-700`}
              
             />
-          </div>
+          </div> 
 
           {/* email input */}
 
@@ -178,8 +184,17 @@ const Register = () => {
             <FaLock
              className="absolute left-3 top-3 text-blue-300" />
             <input onChange={
-                (e)=> ( setFromdata((prev)=>({...prev , password:e.target.value})) , 
-                setAllerror((prev)=>({...prev , passworderror:"border-blue-400"})) )
+                (e)=> {
+                const value = e.target.value;
+                setFromdata((prev)=>({...prev , password:value})) , 
+                setAllerror((prev)=>{
+                    if(value && fromData.confirmpasword && value== fromData.confirmpasword){
+                     return ({...prev , passworderror:"border-blue-400" ,confirmpassworderror:"border-blue-400"})
+                    }else{
+                      return  ({...prev , passworderror:"border-blue-400"})
+                    }
+                }) 
+              }
             }
        
             
@@ -195,10 +210,16 @@ const Register = () => {
           {/* Confirm password input */}
           <div className="relative">
             <FaLock className="absolute left-3 top-3 text-blue-300" />
-            <input onChange={(e)=>(
-             setFromdata((prev)=>({...prev , confirmpasword:e.target.value})),
-             setAllerror((prev)=>({...prev , confirmpassworderror:"border-blue-400"}))
-            )
+            <input onChange={(e)=>{
+                const value = e.target.value;
+                setFromdata((prev)=>({...prev , confirmpasword:value})) , 
+                setAllerror((prev)=>{
+                    if(value && fromData.password && value== fromData.password){
+                     return ({...prev , passworderror:"border-blue-400" ,confirmpassworderror:"border-blue-400"})
+                    }else{
+                      return  ({...prev , confirmpassworderror:"border-blue-400"})
+                    }
+                }) }
           }
 
               

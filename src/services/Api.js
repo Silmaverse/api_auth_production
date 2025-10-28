@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import Cookies from 'js-cookie';
 
 const api = axios.create({
     baseURL:"https://api.freeapi.app/api/v1/users",
@@ -11,9 +11,9 @@ api.interceptors.request.use(
 
     (config)=>{
 
-        const token ="12gthi345"
+        const token = Cookies.get("userId")
         if(token){
-            config.headers.authorization= token
+            config.headers.authorization=`Bearer ${token}`
 
         }
 
@@ -31,19 +31,33 @@ export const authentication ={
 
     registerUser:async(fromdata)=>{
 
-       
-        const res = await api.post("/register" , fromdata)
+ 
+       const res = await api.post("/register" , fromdata)
         console.log(res.data)
-        return res.data
-        
+        return res.data;
+     
+
+           
       
 
     },
+
     loginUser:async(fromdata)=>{
 
         const res = await api.post("/login" ,fromdata)
         console.log(res.data)
         return res.data
+    },
+
+
+    refreshToken: async(token)=>{
+
+        const res = await api.post("/refresh-token",{refreshToken:token});
+
+        console.log(res.data)
+
+        return res.data;
+
     }
 
 

@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { authentication } from '../services/api'
 import { Flip, toast, ToastContainer } from 'react-toastify'
+import { ClipLoader } from "react-spinners";
+import Cookies from 'js-cookie';
 
-const Login = () => {
+const Login =  () => {
 
      const[fromData  ,setFromdata] =useState({
             password: null,
@@ -15,9 +17,14 @@ const Login = () => {
              passworderror:"border-blue-400",
       })
 
+       const[loader,setLoader] =useState(false);
 
-        const handleLogin =(e)=>{
+       
+
+        const handleLogin = async(e)=>{
       
+          setLoader(true)
+          
           e.preventDefault();
           if(!fromData.username){
               setAllerror((prev)=> ({...prev , usernameerror:"border-red-400"}))
@@ -38,7 +45,8 @@ const Login = () => {
            try{
                
                
-               const res =authentication.loginUser( payload);
+               const res =await authentication.loginUser( payload);
+                console.log(res)
       
       
               console.log("Login Success",res);
@@ -57,7 +65,7 @@ const Login = () => {
       
      
           
-      
+           setLoader(false)
          
       
            }catch(err){
@@ -74,15 +82,18 @@ const Login = () => {
               transition: Flip,
       
           });
+           setLoader(false)
+         
       
            } 
           
           
-          
+          setLoader(false)
+         
           
       
       
-         }
+}
       
 
 
@@ -94,11 +105,11 @@ const Login = () => {
     <div
     className="w-90 rounded-lg shadow h-[380px] p-6 bg-white relative overflow-hidden"
     >
-    <div class="flex flex-col justify-center items-center space-y-6">
+    <div className="flex flex-col justify-center items-center space-y-6">
         <h2 className="text-2xl font-medium text-slate-700">Login</h2>
         <p className="text-slate-500">Enter details below.</p>
     </div>
-    <form  onSubmit={handleLogin} class="w-full mt-4 space-y-8 ">
+    <form  onSubmit={handleLogin} className="w-full mt-4 space-y-8 ">
         <div>
         <input  onChange={
                 (e)=> {
@@ -128,7 +139,15 @@ const Login = () => {
         />
         </div>
     
-        <button
+        {
+          loader?
+          <div
+        className="w-full text-center py-1 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 rounded-md text-white ring-2"
+      
+        >
+         <ClipLoader size={20} />
+        </div>
+          :<button
         className="w-full justify-center py-1 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 rounded-md text-white ring-2"
         id="login"
         name="login"
@@ -136,6 +155,7 @@ const Login = () => {
         >
         login
         </button>
+        }
         <p className="flex justify-center space-x-1 pb-4">
         <span className="text-slate-700"> Have an account? </span>
         <Link className="text-blue-500 hover:underline" to={"/"}>Sign Up</Link>

@@ -32,6 +32,7 @@ const Register = () => {
    const handleregsiter =async(e)=>{
      setLoader(true)
     e.preventDefault();
+
     if(!fromData.username){
         setAllerror((prev)=> ({...prev , usernameerror:"border-red-400"}))
     }
@@ -63,6 +64,7 @@ const Register = () => {
       try{
          
            const res = await authentication.registerUser( payload);
+           console.log(res)
           toast.success('Registration Success!', {
           position: "top-center",
           autoClose: 5000,
@@ -73,7 +75,7 @@ const Register = () => {
           progress: undefined,
           theme: "dark",
           transition: Zoom,
-});
+     });
   
          
      
@@ -84,7 +86,7 @@ const Register = () => {
     }  
     catch(err){
           console.log(err)
-           toast.error('🦄 Wow so easy!', {
+           toast.error('Registration failed!', {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: true,
@@ -95,7 +97,10 @@ const Register = () => {
           theme: "dark",
           transition: Zoom,
           });
+          setLoader(false)
        } 
+
+        setLoader(false)
       
 
    
@@ -207,7 +212,8 @@ const Register = () => {
             />
           </div>
           {
-            loader?  <div
+            loader?  
+            <div
                
                 className="w-full bg-blue-200 text-blue-700 py-2 rounded text-center hover:bg-blue-300 transition font-semibold"
             >

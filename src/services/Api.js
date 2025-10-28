@@ -30,14 +30,20 @@ api.interceptors.request.use(
 export const authentication ={
 
     registerUser:async(fromdata)=>{
-        const res = await api.post("/register" , fromdata)
 
+       
+        const res = await api.post("/register" , fromdata)
+        console.log(res.data)
         return res.data
+        
+      
 
     },
     loginUser:async(fromdata)=>{
 
         const res = await api.post("/login" ,fromdata)
+        console.log(res.data)
+        return res.data
     }
 
 

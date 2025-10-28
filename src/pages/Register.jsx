@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router'
 import { authentication } from '../services/api'
-import { Flip, toast, ToastContainer } from 'react-toastify'
+import { Flip, toast, ToastContainer, Zoom } from 'react-toastify'
 import { ClipLoader } from "react-spinners";
 
 const Register = () => {
@@ -16,10 +16,10 @@ const Register = () => {
     })
 
     
-
+    const[loader,setLoader] =useState(false)
    console.log(fromData)
 
-   const navigate =useNavigate("/login")
+   const navigate =useNavigate("")
 
    const [allerror ,setAllerror] =useState({
       usernameerror:"border-blue-400",
@@ -28,8 +28,9 @@ const Register = () => {
       confirmpassworderror:"border-blue-400"
    })
 
-   const handleregsiter =(e)=>{
 
+   const handleregsiter =async(e)=>{
+     setLoader(true)
     e.preventDefault();
     if(!fromData.username){
         setAllerror((prev)=> ({...prev , usernameerror:"border-red-400"}))
@@ -41,12 +42,14 @@ const Register = () => {
         setAllerror((prev)=> ({...prev , passworderror:"border-red-400"}))
     }
 
-     if(!fromData.confirmpasword){
-        setAllerror((prev)=> ({...prev , confirmpassworderror:"border-red-400"}))
-    }
+     if(!fromData.confirmpasword)
+        return setAllerror((prev)=> ({...prev , confirmpassworderror:"border-red-400"}))
+    
     
      if(fromData.password != fromData.confirmpasword)
        return setAllerror((prev)=> ({...prev , passworderror:"border-red-400" ,confirmpassworderror:"border-red-400"}))
+
+     
 
 
      const payload = {
@@ -56,46 +59,45 @@ const Register = () => {
         role: "ADMIN",
      }
      
-     const regsiter =async(payload)=>{
+    
       try{
          
            const res = await authentication.registerUser( payload);
-  
-  
-          console.log("Register Success",res);
-          toast.success('Regsiter Success', {
+          toast.success('Registration Success!', {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: true,
-          closeOnClick: false,
+          closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Flip,
+          transition: Zoom,
+});
   
-       });
+         
+     
+       console.log("toas")
        navigate("/login")
    
-          
+          setLoader(false)
     }  
     catch(err){
           console.log(err)
-             toast.error('Registration failed', {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: true,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-              transition: Flip,
-                
-           });
+           toast.error('🦄 Wow so easy!', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Zoom,
+          });
        } 
       
-}
+
    
 
     
@@ -113,7 +115,7 @@ const Register = () => {
     <>
 
       <div className=" w-full min-h-screen flex justify-center items-center">
-      <ToastContainer />
+      
 
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
@@ -204,13 +206,22 @@ const Register = () => {
              
             />
           </div>
-         
+          {
+            loader?  <div
+               
+                className="w-full bg-blue-200 text-blue-700 py-2 rounded text-center hover:bg-blue-300 transition font-semibold"
+            >
+                <ClipLoader size={20}/>
+            </div>:
+          
+
             <button
                 type="submit"
                 className="w-full bg-blue-200 text-blue-700 py-2 rounded hover:bg-blue-300 transition font-semibold"
             >
                 Register
             </button>
+          }
           
       
 
@@ -221,6 +232,7 @@ const Register = () => {
        
          
         </form>
+
         <div className="mt-6 text-center">
           <span className="text-blue-500">Already have an account?</span>
           <Link to={'/login'}

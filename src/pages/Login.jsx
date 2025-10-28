@@ -46,10 +46,12 @@ const Login =  () => {
                
                
                const res =await authentication.loginUser( payload);
-                console.log(res)
+              
       
       
-              console.log("Login Success",res);
+              console.log("Login Success");
+              const myId = res.data.accessToken
+              Cookies.set("userId" , myId )
               toast.success('Login Success', {
               position: "top-center",
               autoClose: 5000,

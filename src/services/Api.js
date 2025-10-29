@@ -7,23 +7,52 @@ const api = axios.create({
 })
 
 
+
 api.interceptors.request.use(
 
     (config)=>{
 
-        const token = Cookies.get("userId")
+        const token = Cookies.get("userId");
+        console.log(token)
         if(token){
-            config.headers.authorization=`Bearer ${token}`
+            config.headers.Authorization= token
 
         }
-
+  
+        console.log(config);
         return config
     },
 
-    (err)=>{
-      return Promise.reject(err)
-    }
+      (err)=>{
 
+          return Promise.reject(err)
+      }
+    
+
+)
+
+api.interceptors.response.use(
+  (response)=>response ,
+   async(err)=>{
+     if(err.response?.status == 401){
+        const rt = Cookies.get("refreshToken");
+        console.log(rt);
+        if(!rt) return Promise.reject(err);
+        try {
+        const res = await authentication.refreshToken(rt);
+        Cookies.set("userId", res.data.accessToken, { expires: 1 / 24 });
+        Cookies.set("refreshToken", res.data.refreshToken, { expires: 1 });
+        err.config.headers.Authorization = res.data.accessToken;
+        console.log(res);
+        return api(err.config);
+        
+        } catch (err) {
+          return Promise.reject(err);
+        }
+     }
+
+     return Promise.reject(err);
+   }
 )
 
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router'
-import { authentication } from '../services/api'
+import { authentication } from '../services/Api'
 import { Flip, toast, ToastContainer, Zoom } from 'react-toastify'
 import { ClipLoader } from "react-spinners";
 
@@ -29,7 +29,7 @@ const Register = () => {
    })
 
 
-   console.log(allerror)
+   
 
 const handleregsiter =async(e)=>{
     setLoader(true)
